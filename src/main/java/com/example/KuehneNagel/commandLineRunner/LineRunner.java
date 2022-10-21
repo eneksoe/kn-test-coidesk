@@ -23,23 +23,28 @@ public class LineRunner implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        log.info("CURRENCY");
         Scanner scanner = new Scanner(System.in);
 
-        String stop = "stop";
-        try {
-            String currency = scanner.nextLine();
-            fetch(currency.toUpperCase());
-        } catch (Exception e) {
-            log.info("Unsupported currency");
+        while (true) {
+            try {
+                log.info("Enter CURRENCY USD, EUR, EEK etc ... or stop");
+                String currency = scanner.nextLine();
+                if (currency.equals("stop")) {
+                    break;
+                }
+                fetch(currency.toUpperCase());
+            } catch (Exception e) {
+                log.info("Unsupported currency");
+            }
         }
+        scanner.close();
     }
 
     public void fetch(String currency) throws IOException {
         final CurrentRate currentPrice = service.getCurrentPrice(currency);
         final HistoricalRate historicalPrice = service.getHistorical(currency);
 
-        log.info("The current Bitcoin rate: " + currentPrice.getRate() + " " + currency);
+        log.info("The current Bitcoin rate: " + currentPrice.getRate() + " " + currentPrice.getCode());
         log.info("The highest Bitcoin rate in the last 180 days: " + historicalPrice.getMaxPrice().toString() + " " + currency);
         log.info("The lowest Bitcoin rate in the last 180 days: " + historicalPrice.getMinPrice().toString() + " " + currency);
     }
